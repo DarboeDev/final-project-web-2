@@ -1,0 +1,324 @@
+<div class="min-h-screen bg-gray-50">
+  <!-- Header -->
+  <div class="bg-white shadow-sm border-b">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center py-6">
+        <div>
+          <h1 class="text-2xl font-bold text-gray-900">
+            {{ getGreeting() }}, {{ currentUser?.fullName }}!
+          </h1>
+          <p class="text-gray-600 mt-1">
+            Here's what's happening with your projects today.
+          </p>
+        </div>
+        <div class="flex space-x-4">
+          <button
+            routerLink="/projects/new"
+            class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200 flex items-center"
+          >
+            <svg
+              class="h-5 w-5 mr-2"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+              ></path>
+            </svg>
+            New Project
+          </button>
+          <button
+            routerLink="/tasks/new"
+            class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors duration-200 flex items-center"
+          >
+            <svg
+              class="h-5 w-5 mr-2"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+              ></path>
+            </svg>
+            New Task
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="flex justify-center items-center h-64">
+      <svg
+        class="animate-spin h-12 w-12 text-blue-600"
+        fill="none"
+        viewBox="0 0 24 24"
+      >
+        <circle
+          class="opacity-25"
+          cx="12"
+          cy="12"
+          r="10"
+          stroke="currentColor"
+          stroke-width="4"
+        ></circle>
+        <path
+          class="opacity-75"
+          fill="currentColor"
+          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+        ></path>
+      </svg>
+      <span class="ml-3 text-lg text-gray-600">Loading dashboard...</span>
+    </div>
+  </div>
+
+  <!-- Dashboard Content -->
+  <div *ngIf="!loading" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <!-- Total Projects -->
+      <div class="bg-white rounded-xl shadow-sm p-6 border">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <div class="p-3 bg-blue-100 rounded-lg">
+              <svg
+                class="h-6 w-6 text-blue-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                ></path>
+              </svg>
+            </div>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-600">Total Projects</p>
+            <p class="text-2xl font-bold text-gray-900">{{ totalProjects }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Total Tasks -->
+      <div class="bg-white rounded-xl shadow-sm p-6 border">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <div class="p-3 bg-indigo-100 rounded-lg">
+              <svg
+                class="h-6 w-6 text-indigo-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                ></path>
+              </svg>
+            </div>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-600">Total Tasks</p>
+            <p class="text-2xl font-bold text-gray-900">{{ totalTasks }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Completed Tasks -->
+      <div class="bg-white rounded-xl shadow-sm p-6 border">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <div class="p-3 bg-green-100 rounded-lg">
+              <svg
+                class="h-6 w-6 text-green-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                ></path>
+              </svg>
+            </div>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-600">Completed</p>
+            <p class="text-2xl font-bold text-gray-900">{{ completedTasks }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Overdue Tasks -->
+      <div class="bg-white rounded-xl shadow-sm p-6 border">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <div class="p-3 bg-red-100 rounded-lg">
+              <svg
+                class="h-6 w-6 text-red-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                ></path>
+              </svg>
+            </div>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-600">Overdue</p>
+            <p class="text-2xl font-bold text-gray-900">{{ overdueTasks }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <!-- Recent Projects -->
+      <div class="bg-white rounded-xl shadow-sm border">
+        <div class="p-6 border-b border-gray-200">
+          <div class="flex justify-between items-center">
+            <h3 class="text-lg font-semibold text-gray-900">Recent Projects</h3>
+            <button
+              routerLink="/projects"
+              class="text-blue-600 hover:text-blue-700 text-sm font-medium"
+            >
+              View all
+            </button>
+          </div>
+        </div>
+        <div class="p-6">
+          <div *ngIf="recentProjects.length === 0" class="text-center py-8">
+            <svg
+              class="mx-auto h-12 w-12 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+              ></path>
+            </svg>
+            <p class="text-gray-500 mt-2">No projects yet</p>
+          </div>
+          <div class="space-y-4">
+            <div
+              *ngFor="let project of recentProjects"
+              class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer"
+              [routerLink]="['/projects', project._id]"
+            >
+              <div class="flex-1">
+                <h4 class="text-sm font-medium text-gray-900">
+                  {{ project.name }}
+                </h4>
+                <p class="text-sm text-gray-600 mt-1">
+                  {{ project.description }}
+                </p>
+                <div class="flex items-center mt-2 space-x-2">
+                  <span
+                    class="px-2 py-1 text-xs rounded-full"
+                    [class]="getStatusColor(project.status)"
+                  >
+                    {{ project.status | titlecase }}
+                  </span>
+                  <span class="text-xs text-gray-500">{{
+                    formatDate(project.updatedAt || project.createdAt || "")
+                  }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Tasks -->
+      <div class="bg-white rounded-xl shadow-sm border">
+        <div class="p-6 border-b border-gray-200">
+          <div class="flex justify-between items-center">
+            <h3 class="text-lg font-semibold text-gray-900">Recent Tasks</h3>
+            <button
+              routerLink="/tasks"
+              class="text-blue-600 hover:text-blue-700 text-sm font-medium"
+            >
+              View all
+            </button>
+          </div>
+        </div>
+        <div class="p-6">
+          <div *ngIf="recentTasks.length === 0" class="text-center py-8">
+            <svg
+              class="mx-auto h-12 w-12 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+              ></path>
+            </svg>
+            <p class="text-gray-500 mt-2">No tasks yet</p>
+          </div>
+          <div class="space-y-4">
+            <div
+              *ngFor="let task of recentTasks"
+              class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer"
+              [routerLink]="['/tasks', task._id]"
+            >
+              <div class="flex-1">
+                <h4 class="text-sm font-medium text-gray-900">
+                  {{ task.title }}
+                </h4>
+                <p class="text-sm text-gray-600 mt-1">{{ task.description }}</p>
+                <div class="flex items-center mt-2 space-x-2">
+                  <span
+                    class="px-2 py-1 text-xs rounded-full"
+                    [class]="getStatusColor(task.status)"
+                  >
+                    {{ task.status | titlecase }}
+                  </span>
+                  <span
+                    class="px-2 py-1 text-xs rounded-full"
+                    [class]="getPriorityColor(task.priority)"
+                  >
+                    {{ task.priority | titlecase }}
+                  </span>
+                  <span *ngIf="task.dueDate" class="text-xs text-gray-500"
+                    >Due {{ formatDate(task.dueDate) }}</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

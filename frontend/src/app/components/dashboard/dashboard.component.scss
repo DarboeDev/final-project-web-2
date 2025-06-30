@@ -1,0 +1,81 @@
+// Dashboard component styles
+.stats-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.stat-icon {
+  background: linear-gradient(
+    135deg,
+    var(--tw-gradient-from),
+    var(--tw-gradient-to)
+  );
+}
+
+.recent-item {
+  transition: all 0.2s ease;
+  border-left: 3px solid transparent;
+
+  &:hover {
+    background-color: #f8fafc;
+    border-left-color: #3b82f6;
+    transform: translateX(4px);
+  }
+}
+
+.status-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+.loading-state {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.empty-state {
+  color: #6b7280;
+}
+
+.gradient-bg {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+// Chart placeholder styles
+.chart-placeholder {
+  background: linear-gradient(
+    45deg,
+    #f3f4f6 25%,
+    #e5e7eb 25%,
+    #e5e7eb 50%,
+    #f3f4f6 50%,
+    #f3f4f6 75%,
+    #e5e7eb 75%
+  );
+  background-size: 20px 20px;
+  animation: loading-pattern 2s linear infinite;
+}
+
+@keyframes loading-pattern {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 20px 20px;
+  }
+}

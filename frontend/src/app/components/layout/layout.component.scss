@@ -1,0 +1,49 @@
+// Layout component styles
+.sidebar {
+  transition: transform 0.3s ease-in-out;
+}
+
+.sidebar-overlay {
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+}
+
+// Mobile responsive adjustments
+@media (max-width: 1024px) {
+  .sidebar {
+    position: fixed;
+    z-index: 50;
+  }
+}
+
+// Navigation link animations
+.nav-link {
+  position: relative;
+  overflow: hidden;
+
+  &::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #3b82f6, #6366f1);
+    transition: width 0.3s ease;
+  }
+
+  &:hover::after,
+  &.active::after {
+    width: 100%;
+  }
+}
+
+// User avatar placeholder
+.user-avatar {
+  background: linear-gradient(135deg, #3b82f6, #6366f1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
+}

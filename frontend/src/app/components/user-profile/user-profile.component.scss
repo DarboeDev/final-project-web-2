@@ -1,0 +1,31 @@
+// User profile component styles
+.profile-form {
+  .form-section {
+    margin-bottom: 2rem;
+  }
+
+  .info-grid {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .info-item {
+    display: flex;
+    align-items: center;
+
+    .label {
+      color: #6b7280;
+      margin-right: 0.5rem;
+    }
+
+    .value {
+      font-weight: 500;
+    }
+  }
+
+  .password-section {
+    border-top: 1px solid #e5e7eb;
+    padding-top: 1.5rem;
+    margin-top: 1.5rem;
+  }
+}

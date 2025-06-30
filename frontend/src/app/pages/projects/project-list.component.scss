@@ -1,0 +1,146 @@
+// Project List Component Styles
+
+.project-card {
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.status-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+
+  &.planning {
+    background-color: #fef3c7;
+    color: #92400e;
+  }
+
+  &.in-progress {
+    background-color: #dbeafe;
+    color: #1e40af;
+  }
+
+  &.completed {
+    background-color: #d1fae5;
+    color: #065f46;
+  }
+
+  &.on-hold {
+    background-color: #f3f4f6;
+    color: #374151;
+  }
+}
+
+.priority-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+
+  &.high {
+    background-color: #fee2e2;
+    color: #991b1b;
+  }
+
+  &.medium {
+    background-color: #fef3c7;
+    color: #92400e;
+  }
+
+  &.low {
+    background-color: #d1fae5;
+    color: #065f46;
+  }
+}
+
+.filter-section {
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+.sort-button {
+  position: relative;
+
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #3b82f6, #6366f1);
+    transition: width 0.3s ease;
+  }
+
+  &:hover::after,
+  &.active::after {
+    width: 100%;
+  }
+}
+
+.pagination-button {
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: #f3f4f6;
+    transform: translateY(-1px);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    transform: none;
+    cursor: not-allowed;
+  }
+}
+
+.search-input {
+  transition: all 0.2s ease;
+
+  &:focus {
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  }
+}
+
+// Loading animation
+.loading-spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// Grid responsiveness
+@media (max-width: 768px) {
+  .project-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-grid {
+    grid-template-columns: 1fr;
+  }
+}

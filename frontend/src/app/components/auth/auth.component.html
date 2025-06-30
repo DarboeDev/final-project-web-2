@@ -1,0 +1,187 @@
+<div
+  class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4"
+>
+  <div class="max-w-md w-full bg-white rounded-xl shadow-2xl p-8">
+    <!-- Header -->
+    <div class="text-center mb-8">
+      <div
+        class="mx-auto h-16 w-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center mb-4"
+      >
+        <svg
+          class="h-8 w-8 text-white"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+          ></path>
+        </svg>
+      </div>
+      <h2 class="text-3xl font-bold text-gray-900">
+        {{ isLogin ? "Welcome Back" : "Create Account" }}
+      </h2>
+      <p class="text-gray-600 mt-2">
+        {{
+          isLogin
+            ? "Sign in to your account"
+            : "Join our task management platform"
+        }}
+      </p>
+    </div>
+
+    <!-- Form -->
+    <form [formGroup]="authForm" (ngSubmit)="onSubmit()" class="space-y-6">
+      <!-- Full Name (Register only) -->
+      <div *ngIf="!isLogin" class="form-group">
+        <label
+          for="fullName"
+          class="block text-sm font-medium text-gray-700 mb-2"
+          >Full Name</label
+        >
+        <input
+          type="text"
+          id="fullName"
+          formControlName="fullName"
+          class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+          placeholder="Enter your full name"
+          [class.border-red-500]="getFieldError('fullName')"
+        />
+        <p *ngIf="getFieldError('fullName')" class="text-red-500 text-sm mt-1">
+          {{ getFieldError("fullName") }}
+        </p>
+      </div>
+
+      <!-- Email -->
+      <div class="form-group">
+        <label for="email" class="block text-sm font-medium text-gray-700 mb-2"
+          >Email Address</label
+        >
+        <input
+          type="email"
+          id="email"
+          formControlName="email"
+          class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+          placeholder="Enter your email"
+          [class.border-red-500]="getFieldError('email')"
+        />
+        <p *ngIf="getFieldError('email')" class="text-red-500 text-sm mt-1">
+          {{ getFieldError("email") }}
+        </p>
+      </div>
+
+      <!-- Password -->
+      <div class="form-group">
+        <label
+          for="password"
+          class="block text-sm font-medium text-gray-700 mb-2"
+          >Password</label
+        >
+        <input
+          type="password"
+          id="password"
+          formControlName="password"
+          class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+          placeholder="Enter your password"
+          [class.border-red-500]="getFieldError('password')"
+        />
+        <p *ngIf="getFieldError('password')" class="text-red-500 text-sm mt-1">
+          {{ getFieldError("password") }}
+        </p>
+      </div>
+
+      <!-- Confirm Password (Register only) -->
+      <div *ngIf="!isLogin" class="form-group">
+        <label
+          for="confirmPassword"
+          class="block text-sm font-medium text-gray-700 mb-2"
+          >Confirm Password</label
+        >
+        <input
+          type="password"
+          id="confirmPassword"
+          formControlName="confirmPassword"
+          class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+          placeholder="Confirm your password"
+          [class.border-red-500]="getFieldError('confirmPassword')"
+        />
+        <p
+          *ngIf="getFieldError('confirmPassword')"
+          class="text-red-500 text-sm mt-1"
+        >
+          {{ getFieldError("confirmPassword") }}
+        </p>
+      </div>
+
+      <!-- Error Message -->
+      <div *ngIf="error" class="bg-red-50 border border-red-200 rounded-lg p-4">
+        <div class="flex items-center">
+          <svg
+            class="h-5 w-5 text-red-400 mr-2"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            ></path>
+          </svg>
+          <p class="text-red-700 text-sm">{{ error }}</p>
+        </div>
+      </div>
+
+      <!-- Submit Button -->
+      <button
+        type="submit"
+        [disabled]="!authForm.valid || loading"
+        class="w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-3 px-4 rounded-lg font-medium hover:from-blue-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+      >
+        <span *ngIf="!loading">{{
+          isLogin ? "Sign In" : "Create Account"
+        }}</span>
+        <span *ngIf="loading" class="flex items-center justify-center">
+          <svg
+            class="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              class="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="4"
+            ></circle>
+            <path
+              class="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            ></path>
+          </svg>
+          {{ isLogin ? "Signing In..." : "Creating Account..." }}
+        </span>
+      </button>
+    </form>
+
+    <!-- Toggle Mode -->
+    <div class="mt-8 text-center">
+      <p class="text-gray-600">
+        {{ isLogin ? "Don't have an account?" : "Already have an account?" }}
+        <button
+          type="button"
+          (click)="toggleMode()"
+          class="text-blue-600 hover:text-blue-700 font-medium ml-1 transition-colors duration-200"
+        >
+          {{ isLogin ? "Sign up" : "Sign in" }}
+        </button>
+      </p>
+    </div>
+  </div>
+</div>

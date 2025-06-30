@@ -1,0 +1,332 @@
+<div class="p-6 max-w-4xl mx-auto">
+  <div
+    *ngIf="error"
+    class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg"
+  >
+    <p class="text-red-800">{{ error }}</p>
+  </div>
+
+  <div *ngIf="loading" class="flex justify-center items-center py-12">
+    <div
+      class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"
+    ></div>
+  </div>
+
+  <div
+    *ngIf="!loading && task"
+    class="bg-white rounded-lg shadow-md border border-gray-200"
+  >
+    <!-- Header -->
+    <div class="border-b border-gray-200 p-6">
+      <div class="flex justify-between items-start">
+        <div class="flex-1">
+          <h1 class="text-3xl font-bold text-gray-900 mb-2">
+            {{ task.title }}
+          </h1>
+          <div class="flex flex-wrap gap-2 mb-4">
+            <span
+              class="px-3 py-1 text-sm font-medium rounded-full"
+              [ngClass]="getStatusColor(task.status)"
+            >
+              {{ task.status | titlecase }}
+            </span>
+            <span
+              class="px-3 py-1 text-sm font-medium rounded-full"
+              [ngClass]="getPriorityColor(task.priority)"
+            >
+              {{ task.priority | titlecase }} Priority
+            </span>
+          </div>
+        </div>
+        <div class="flex gap-2 ml-4">
+          <button
+            [routerLink]="['/tasks']"
+            class="text-gray-600 hover:text-gray-800 p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200"
+            title="Back to tasks"
+            aria-label="Back to tasks list"
+          >
+            <svg
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M10 19l-7-7m0 0l7-7m-7 7h18"
+              ></path>
+            </svg>
+          </button>
+          <button
+            *ngIf="canEditTask()"
+            [routerLink]="['/tasks', task._id, 'edit']"
+            class="text-primary-600 hover:text-primary-800 p-2 rounded-lg hover:bg-primary-50 transition-colors duration-200"
+            title="Edit task"
+            aria-label="Edit task"
+          >
+            <svg
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+              ></path>
+            </svg>
+          </button>
+          <button
+            *ngIf="canDeleteTask()"
+            (click)="onDeleteTask()"
+            class="text-red-600 hover:text-red-800 p-2 rounded-lg hover:bg-red-50 transition-colors duration-200"
+            title="Delete task"
+            aria-label="Delete task"
+          >
+            <svg
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+              ></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div
+      *ngIf="canCompleteTask()"
+      class="border-b border-gray-200 px-6 py-4 bg-gray-50"
+    >
+      <h3 class="text-sm font-medium text-gray-900 mb-3">Actions</h3>
+      <div class="flex gap-2">
+        <!-- Complete Task Button -->
+        <button
+          *ngIf="task.status !== 'completed'"
+          (click)="markAsCompleted()"
+          class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors duration-200"
+        >
+          <svg
+            class="w-4 h-4 mr-2"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M5 13l4 4L19 7"
+            ></path>
+          </svg>
+          Complete Task
+        </button>
+
+        <!-- Task Completed Message -->
+        <div
+          *ngIf="task.status === 'completed'"
+          class="inline-flex items-center px-4 py-2 bg-green-100 text-green-800 rounded-md"
+        >
+          <svg
+            class="w-4 h-4 mr-2"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M5 13l4 4L19 7"
+            ></path>
+          </svg>
+          Task Completed
+        </div>
+      </div>
+    </div>
+
+    <!-- Task Details -->
+    <div class="p-6">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Main Content -->
+        <div class="lg:col-span-2">
+          <div class="mb-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-3">
+              Description
+            </h2>
+            <div class="prose max-w-none">
+              <p class="text-gray-700 whitespace-pre-wrap">
+                {{ task.description }}
+              </p>
+            </div>
+          </div>
+
+          <!-- Tags -->
+          <div *ngIf="task.tags && task.tags.length > 0" class="mb-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-3">Tags</h2>
+            <div class="flex flex-wrap gap-2">
+              <span
+                *ngFor="let tag of task.tags"
+                class="px-2 py-1 bg-gray-100 text-gray-700 text-sm rounded-md"
+              >
+                #{{ tag }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="lg:col-span-1">
+          <div class="bg-gray-50 rounded-lg p-4 space-y-4">
+            <!-- Project -->
+            <div *ngIf="task.project">
+              <h3 class="text-sm font-medium text-gray-900 mb-1">Project</h3>
+              <p class="text-sm text-gray-700">
+                <a
+                  *ngIf="getProjectId(task.project)"
+                  [routerLink]="['/projects', getProjectId(task.project)]"
+                  class="text-primary-600 hover:text-primary-800 transition-colors duration-200"
+                >
+                  {{ getProjectName(task.project) }}
+                </a>
+                <span *ngIf="!getProjectId(task.project)">
+                  {{ getProjectName(task.project) }}
+                </span>
+              </p>
+            </div>
+
+            <!-- Assigned To -->
+            <div *ngIf="task.assignedTo">
+              <h3 class="text-sm font-medium text-gray-900 mb-1">
+                Assigned To
+              </h3>
+              <div
+                *ngIf="getAssignedToName(task.assignedTo) !== 'Unassigned'"
+                class="flex items-center gap-2"
+              >
+                <div
+                  class="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center"
+                >
+                  <span class="text-primary-600 text-sm font-medium">
+                    {{ getAssignedToInitial(task.assignedTo) }}
+                  </span>
+                </div>
+                <div>
+                  <p class="text-sm font-medium text-gray-700">
+                    {{ getAssignedToName(task.assignedTo) }}
+                  </p>
+                  <p class="text-xs text-gray-500">
+                    {{ getAssignedToEmail(task.assignedTo) }}
+                  </p>
+                </div>
+              </div>
+              <span
+                *ngIf="getAssignedToName(task.assignedTo) === 'Unassigned'"
+                class="text-sm text-gray-700"
+              >
+                Unassigned
+              </span>
+            </div>
+
+            <!-- Due Date -->
+            <div *ngIf="task.dueDate">
+              <h3 class="text-sm font-medium text-gray-900 mb-1">Due Date</h3>
+              <p class="text-sm text-gray-700">
+                {{ task.dueDate | date : "medium" }}
+              </p>
+            </div>
+
+            <!-- Created Date -->
+            <div *ngIf="task.createdAt">
+              <h3 class="text-sm font-medium text-gray-900 mb-1">Created</h3>
+              <p class="text-sm text-gray-700">
+                {{ task.createdAt | date : "medium" }}
+              </p>
+            </div>
+
+            <!-- Updated Date -->
+            <div *ngIf="task.updatedAt">
+              <h3 class="text-sm font-medium text-gray-900 mb-1">
+                Last Updated
+              </h3>
+              <p class="text-sm text-gray-700">
+                {{ task.updatedAt | date : "medium" }}
+              </p>
+            </div>
+
+            <!-- Created By -->
+            <div *ngIf="task.createdBy">
+              <h3 class="text-sm font-medium text-gray-900 mb-1">Created By</h3>
+              <div class="flex items-center gap-2">
+                <div
+                  class="w-6 h-6 bg-gray-100 rounded-full flex items-center justify-center"
+                >
+                  <span class="text-gray-600 text-xs font-medium">
+                    {{ getCreatedByInitial(task.createdBy) }}
+                  </span>
+                </div>
+                <p class="text-sm text-gray-700">
+                  {{ getCreatedByName(task.createdBy) }}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Task not found -->
+  <div *ngIf="!loading && !task" class="text-center py-12">
+    <svg
+      class="mx-auto h-12 w-12 text-gray-400"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+      />
+    </svg>
+    <h3 class="mt-2 text-sm font-medium text-gray-900">Task not found</h3>
+    <p class="mt-1 text-sm text-gray-500">
+      The task you're looking for doesn't exist.
+    </p>
+    <div class="mt-6">
+      <button
+        [routerLink]="['/tasks']"
+        class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+      >
+        <svg
+          class="-ml-1 mr-2 h-5 w-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M10 19l-7-7m0 0l7-7m-7 7h18"
+          ></path>
+        </svg>
+        Back to Tasks
+      </button>
+    </div>
+  </div>
+</div>

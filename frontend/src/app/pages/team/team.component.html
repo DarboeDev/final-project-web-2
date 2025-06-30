@@ -1,0 +1,245 @@
+<div class="p-6">
+  <div class="mb-6">
+    <h1 class="text-3xl font-bold text-gray-900">Team Management</h1>
+    <p class="text-gray-600 mt-2">
+      View and manage team members and their projects
+    </p>
+  </div>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="flex justify-center items-center h-64">
+    <div
+      class="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"
+    ></div>
+  </div>
+
+  <div *ngIf="!loading">
+    <!-- Filters -->
+    <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+      <h2 class="text-lg font-semibold text-gray-900 mb-4">Filters</h2>
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div>
+          <label
+            for="search"
+            class="block text-sm font-medium text-gray-700 mb-2"
+            >Search</label
+          >
+          <input
+            id="search"
+            type="text"
+            [(ngModel)]="searchTerm"
+            placeholder="Search by name, email, or department..."
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          />
+        </div>
+        <div>
+          <label for="role" class="block text-sm font-medium text-gray-700 mb-2"
+            >Role</label
+          >
+          <select
+            id="role"
+            [(ngModel)]="selectedRole"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          >
+            <option value="">All Roles</option>
+            <option value="admin">Admin</option>
+            <option value="project_manager">Project Manager</option>
+            <option value="team_member">Team Member</option>
+          </select>
+        </div>
+        <div>
+          <label
+            for="department"
+            class="block text-sm font-medium text-gray-700 mb-2"
+            >Department</label
+          >
+          <select
+            id="department"
+            [(ngModel)]="selectedDepartment"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          >
+            <option value="">All Departments</option>
+            <option *ngFor="let dept of uniqueDepartments" [value]="dept">
+              {{ dept }}
+            </option>
+          </select>
+        </div>
+        <div class="flex items-end">
+          <button
+            (click)="clearFilters()"
+            class="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors duration-200"
+          >
+            Clear Filters
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Team Members Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div
+        *ngFor="let member of filteredTeamMembers"
+        class="bg-white rounded-lg shadow-md overflow-hidden"
+      >
+        <!-- Member Header -->
+        <div
+          class="p-6 bg-gradient-to-r from-blue-500 to-indigo-600 text-white"
+        >
+          <div class="flex items-center">
+            <div
+              *ngIf="!member.profilePicture"
+              class="h-16 w-16 rounded-full bg-white/20 backdrop-blur-sm border-4 border-white flex items-center justify-center text-white font-bold text-lg"
+              [title]="member.fullName"
+            >
+              {{ getInitials(member.fullName) }}
+            </div>
+            <img
+              title="{{ member.fullName }}"
+              *ngIf="member.profilePicture"
+              [src]="member.profilePicture"
+              [alt]="member.fullName"
+              [title]="member.fullName"
+              class="h-16 w-16 rounded-full border-4 border-white"
+              loading="lazy"
+            />
+            <div class="ml-4">
+              <h3 class="text-lg font-semibold">{{ member.fullName }}</h3>
+              <p class="text-blue-100">{{ member.email }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Member Details -->
+        <div class="p-6">
+          <div class="space-y-4">
+            <!-- Role -->
+            <div class="flex items-center justify-between">
+              <span class="text-sm font-medium text-gray-500">Role:</span>
+              <span
+                [class]="getRoleBadgeClass(member.role)"
+                class="inline-flex px-2 py-1 text-xs font-semibold rounded-full"
+              >
+                {{ member.role.replace("_", " ") | titlecase }}
+              </span>
+            </div>
+
+            <!-- Department -->
+            <div class="flex items-center justify-between">
+              <span class="text-sm font-medium text-gray-500">Department:</span>
+              <span class="text-sm text-gray-900">{{
+                member.department || "N/A"
+              }}</span>
+            </div>
+
+            <!-- Status -->
+            <div class="flex items-center justify-between">
+              <span class="text-sm font-medium text-gray-500">Status:</span>
+              <span
+                [class]="
+                  member.isActive !== false
+                    ? 'bg-green-100 text-green-800'
+                    : 'bg-red-100 text-red-800'
+                "
+                class="inline-flex px-2 py-1 text-xs font-semibold rounded-full"
+              >
+                {{ member.isActive !== false ? "Active" : "Inactive" }}
+              </span>
+            </div>
+
+            <!-- Last Login -->
+            <div
+              *ngIf="member.lastLogin"
+              class="flex items-center justify-between"
+            >
+              <span class="text-sm font-medium text-gray-500">Last Login:</span>
+              <span class="text-sm text-gray-900">{{
+                member.lastLogin | date : "shortDate"
+              }}</span>
+            </div>
+          </div>
+
+          <!-- Projects -->
+          <div class="mt-6">
+            <h4 class="text-sm font-medium text-gray-700 mb-3">
+              Active Projects
+            </h4>
+            <div
+              *ngIf="getUserProjects(member._id!).length > 0; else noProjects"
+              class="space-y-2"
+            >
+              <div
+                *ngFor="let project of getUserProjects(member._id!).slice(0, 3)"
+                class="flex items-center justify-between p-2 bg-gray-50 rounded-md"
+              >
+                <div>
+                  <h5 class="text-sm font-medium text-gray-900">
+                    {{ project.name }}
+                  </h5>
+                  <p class="text-xs text-gray-600">
+                    {{ project.description || "No description" }}
+                  </p>
+                </div>
+                <span
+                  [class]="getStatusBadgeClass(project.status)"
+                  class="inline-flex px-2 py-1 text-xs font-medium rounded-full"
+                >
+                  {{ project.status | titlecase }}
+                </span>
+              </div>
+              <div
+                *ngIf="getUserProjects(member._id!).length > 3"
+                class="text-xs text-gray-500 text-center"
+              >
+                +{{ getUserProjects(member._id!).length - 3 }} more projects
+              </div>
+            </div>
+            <ng-template #noProjects>
+              <p class="text-sm text-gray-500 italic">No active projects</p>
+            </ng-template>
+          </div>
+
+          <!-- Actions -->
+          <div class="mt-6 flex space-x-2">
+            <button
+              [routerLink]="['/users', member._id]"
+              class="flex-1 px-3 py-2 bg-blue-500 text-white text-sm rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200"
+            >
+              View Profile
+            </button>
+            <button
+              *ngIf="currentUser?.role === 'admin'"
+              [routerLink]="['/users', member._id]"
+              [queryParams]="{ edit: 'true' }"
+              class="px-3 py-2 bg-gray-500 text-white text-sm rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors duration-200"
+            >
+              Edit
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- No Results -->
+    <div *ngIf="filteredTeamMembers.length === 0" class="text-center py-12">
+      <svg
+        class="mx-auto h-12 w-12 text-gray-400"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+        ></path>
+      </svg>
+      <h3 class="mt-2 text-sm font-medium text-gray-900">
+        No team members found
+      </h3>
+      <p class="mt-1 text-sm text-gray-500">
+        Try adjusting your search criteria.
+      </p>
+    </div>
+  </div>
+</div>
